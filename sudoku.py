@@ -92,8 +92,8 @@ class Board(Image):
         self.corners = corners
         self.boxes = []
         rows = np.vsplit(cv_image,9)
-        for r in rows:
-            cols= np.hsplit(r,9)
+        for r,r_image in enumerate(rows):
+            cols= np.hsplit(r_image,9)
             for c, box in enumerate(cols):
                 self.boxes.append(Box(f'row {r}, col {c}', box))
         #todo get boxes from corners
@@ -107,12 +107,10 @@ class Box(Image):
     
 class DigitRecognizer:
     model = None
-    path = None
 
 
-    def __init__(self, path) -> None:
-        self.path = path
-        model = keras.models.load_model(path)
+    def __init__(self, model) -> None:
+        self.model = model
 
     #private method for getting the mask
     def getMask(self, x:np.ndarray):
@@ -184,11 +182,28 @@ class DigitRecognizer:
     def preprocess(self, test):
         mask = self.getMask(test)
         test = cv.bitwise_and(test, test, mask=mask)
+        test = cv.bitwise_not(test)
         test = cv.resize(test,(32,32),interpolation=cv.INTER_AREA)
-        test = test.reshape((-1,32,32,1))
+        test = cv.adaptiveThreshold(test,255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY, 5, 2)
+        test = cv.bitwise_not(test)
+        contours, heirarchy = cv.findContours(test, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        canvas = np.zeros(test.shape,dtype=np.uint8)
+        canvas2 = np.zeros(test.shape,dtype=np.uint8)
+        cv.drawContours(canvas,contours,len(contours) - 1, (1), thickness = cv.FILLED)
+        canvas2 = cv.bitwise_and(test,test,mask=canvas)
+        test = canvas2
+        test = cv.bitwise_not(test)
+        
+        #test = test.reshape((-1,32,32,1))
         return test
     #todo make image transformations and return a digit
-    def predict(self, img:np.ndarray) -> int:
+    def predict(self, box: Box) -> int:
+        
+        img = box.cv_image
         x = self.preprocess(img)
-
-        return x
+        if(np.min(x[12:20,8:24]) == 255):
+            return
+        results = self.model.predict(x.reshape((-1,32,32,1)))
+        results = np.argmax(results,axis = 1) + 1
+        box.value = results
+        return results
