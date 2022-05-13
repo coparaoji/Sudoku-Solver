@@ -106,6 +106,7 @@ def get_data_split(file="training_data", image_retriever = ImageRetriever()):
     for number_folder in os.listdir(path):
         for number_image in os.listdir(os.path.join(path,number_folder)):
             image_path = os.path.join(path,number_folder,number_image)
+            print(image_path)
             image_retriever.get(image_path)
             train = np.vstack([train,image_retriever.raw_image.reshape((1,28,28,1))])
             labels = np.vstack([labels, image_retriever.label.reshape((1,9))])
@@ -129,7 +130,7 @@ def build_model():
     model.add(MaxPooling2D(pool_size=(2)))
     model.add(Flatten())
     model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.2))
     model.add(Dense(1024, activation='relu'))
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation='softmax'))
@@ -218,45 +219,61 @@ class DigitRecognizer:
                 right -= index
                 break
 
-
+        
 
         mask = np.zeros(x.shape, dtype="uint8")
         cv.rectangle(mask, (left, top), (right, bottom), 255, -1)
         return mask
 
+    def zoom_center(self, img, zoom_factor=1.5):
+        y_size = img.shape[0]
+        x_size = img.shape[1]
+        
+        # define new boundaries
+        x1 = int(0.5*x_size*(1-1/zoom_factor))
+        x2 = int(x_size-0.5*x_size*(1-1/zoom_factor))
+        y1 = int(0.5*y_size*(1-1/zoom_factor))
+        y2 = int(y_size-0.5*y_size*(1-1/zoom_factor))
 
+        # first crop image then scale
+        img_cropped = img[y1:y2,x1:x2]
+        return cv.resize(img_cropped,(28,28), fx=zoom_factor, fy=zoom_factor, interpolation=cv.INTER_LINEAR)
+    
     #private preprocess for prediction
-    def preprocess(self, test):
+    def preprocess(self, x):
+        test = x.cv_image
+        #test = cv.resize(test,(28,28),interpolation=cv.INTER_AREA)
+        canvas = np.zeros(test.shape,dtype=np.uint8)
+        contours, heirarchy = cv.findContours(test, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+        canvas2 = np.zeros(test.shape,dtype=np.uint8)
+        cv.drawContours(canvas,contours, 0, (255), thickness = cv.FILLED)
         mask = self.getMask(test)
         test = cv.bitwise_and(test, test, mask=mask)
-        test = cv.bitwise_not(test)
-        test = cv.resize(test,(28,28),interpolation=cv.INTER_AREA)
-        test = cv.adaptiveThreshold(test,255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY,3,5)
-        test = cv.bitwise_not(test)
-        contours, heirarchy = cv.findContours(test, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-        canvas = np.zeros(test.shape,dtype=np.uint8)
-        canvas2 = np.zeros(test.shape,dtype=np.uint8)
-        cv.drawContours(canvas,contours,len(contours) - 1, (1), thickness = cv.FILLED)
-        canvas2 = cv.bitwise_and(test,test,mask=canvas)
-        test = canvas2
-        #test = cv.bitwise_not(test)
-        
-        #test = test.reshape((-1,32,32,1))
+        test = cv.resize(test,(28,28),interpolation=cv.INTER_CUBIC)
+        #test = cv.medianBlur(test, 3)
+        test = cv.erode(test, cv.getStructuringElement(cv.MORPH_CROSS,(3,3)),iterations=1)
+        #test = cv.medianBlur(test, 3)
+        #ret,test = cv.threshold(test,15,255,cv.THRESH_BINARY)
+        test = self.zoom_center(test,1.15)
+        #ret,test = cv.threshold(test,90,255,cv.THRESH_BINARY)
         return test
+
     #todo make image transformations and return a digit
     def predict(self, box) -> int:
         
         img = box.cv_image
-        x = self.preprocess(img)
+        x = self.preprocess(box)
         if(np.max(x[12:20,8:24]) == 0):
             return 0
-        results = self.model.predict(x.reshape((-1,28,28,1)))
+        #x = cv.bitwise_not(x)
+        
+        results = self.model.predict((x/255).reshape((-1,28,28,1)))
         results = np.argmax(results,axis = 1) + 1
         results = results[0]
         box.value = results
         return results
 
 def get_model():
-    model = load_model('saved_model/my_model')
+    model = load_model('Sudoku-Solver/digit_recognizer')
     model = DigitRecognizer(model)
     return model

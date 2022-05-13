@@ -1,16 +1,22 @@
 import digit_recognizer as dr
-import solver
+import solver as ss
 import sudoku_reader as reader
+from tensorflow.keras.models import load_model
 
-path = "Assets/puzz1.jpg"
+def main():
 
-sudoku = reader.readImage(path)
+    path = "Sudoku-Solver\Assets\puzz1.jpg"
 
-recognizer = dr.get_model()
+    sudoku = reader.readImage(path)
+    model = load_model('Sudoku-Solver\digit_recognizer')
+    recognizer = dr.DigitRecognizer(model)
 
-board = sudoku.get_board(recognizer)
+    board = sudoku.get_board(recognizer)
+    grid = board.grid
+    ss.print_board(grid)
+    ss.solve(grid)
+    print("__________________________")
+    ss.print_board(grid)
 
-solver.print_board(board)
-solver.solve(board)
-print("___________________")
-solver.print_board(board)
+if __name__ == "__main__":
+    main()
