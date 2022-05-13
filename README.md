@@ -1,5 +1,5 @@
 # Sudoku-Solver
-A project to solve sudoku puzzles and practice SOLID design principles.
+A project to solve sudoku puzzles (and to help me practice SOLID design principles, feedback would be greatly appreciated).
 
 #### Recognizing the Board
 Using this bit from the OpenCV docs,  
@@ -13,8 +13,10 @@ Once the vertices of the contour have been retereved then we will do a K-means c
 #### Recognizing the numbers
 Once the grid has been located we can roughly get the grid-boxes by evenly splitting the grid into 81 9x9 boxes. A convolutional neural network will be used to recognize the numbers. It has 4 convolutional layers, 2 pooling layers, and 2 fully-connected layers. The full architecture and training process can be found in [here]. 
 #### Solving Sudoku
-
+Sudoku can be solved by one by one assigning numbers to empty cells. Before assigning a number, check whether it is safe to assign. Check that the same number is not present in the current row, current column and current 3X3 subgrid. After checking for safety, assign the number, and recursively check whether this assignment leads to a solution or not. If the assignment doesn’t lead to a solution, then try the next number for the current empty cell. And if none of the number (1 to 9) leads to a solution, return false and print no solution exists.
 #### Results
+
+[insert picture here] 
 
 #### Final words
 1. It would have been more reliable to use a ConvNN to locate the board. That would however require a labeled dataset of sudoku images which I presently don't have.
