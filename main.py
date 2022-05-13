@@ -5,10 +5,10 @@ from tensorflow.keras.models import load_model
 
 def main():
 
-    path = "Sudoku-Solver\Assets\puzz1.jpg"
+    path = "Assets/puzz1.jpg"
 
     sudoku = reader.readImage(path)
-    model = load_model('Sudoku-Solver\digit_recognizer')
+    model = load_model('digit_recognizer')
     recognizer = dr.DigitRecognizer(model)
 
     board = sudoku.get_board(recognizer)
