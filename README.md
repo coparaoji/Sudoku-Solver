@@ -20,7 +20,7 @@ Once the grid has been located we can roughly get the grid-boxes by evenly split
 Sudoku can be solved by one by one assigning numbers to empty cells. Before assigning a number, check whether it is safe to assign. Check that the same number is not present in the current row, current column and current 3X3 subgrid. After checking for safety, assign the number, and recursively check whether this assignment leads to a solution or not. If the assignment doesn’t lead to a solution, then try the next number for the current empty cell. And if none of the number (1 to 9) leads to a solution, return false and print no solution exists.
 #### Results
 
-<img src="Assets/results.png" width="1000" height="200"></img> 
+<img src="Assets/results.PNG" width="1000" height="200"></img> 
 
 #### Final words
 1. It would have been more reliable to use a ConvNN to locate the board. That would however require a labeled dataset of sudoku images which I presently don't have.
