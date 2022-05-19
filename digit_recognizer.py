@@ -1,3 +1,10 @@
+# -----------------------------------------------------------
+# Contains the classes for loading the model, preprocessing images
+# for predicitons, and making predictions
+#
+# 2022 Alex Oparaoji
+# email coparaoji@gmail.com
+# -----------------------------------------------------------
 import cv2 as cv
 import os
 import numpy as np 
@@ -273,7 +280,4 @@ class DigitRecognizer:
         box.value = results
         return results
 
-def get_model():
-    model = load_model('Sudoku-Solver/digit_recognizer')
-    model = DigitRecognizer(model)
-    return model
+

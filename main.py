@@ -1,3 +1,9 @@
+# -----------------------------------------------------------
+# Main file for running the solver
+#
+# 2022 Alex Oparaoji
+# email coparaoji@gmail.com
+# -----------------------------------------------------------
 import digit_recognizer as dr
 import solver as ss
 import sudoku_reader as reader
