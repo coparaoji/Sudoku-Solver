@@ -69,3 +69,10 @@ def find_empty(bo):
                 return (i, j)  # row, col
 
     return None
+
+
+def final(grid):
+    print_board(grid)
+    solve(grid)
+    print("__________________________")
+    print_board(grid)

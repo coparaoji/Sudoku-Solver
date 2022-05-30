@@ -14,15 +14,12 @@ def main():
     path = "Assets/puzz1.jpg"
 
     sudoku = reader.readImage(path)
+    sudoku.show()
     model = load_model('digit_recognizer')
     recognizer = dr.DigitRecognizer(model)
 
-    board = sudoku.get_board(recognizer)
-    grid = board.grid
-    ss.print_board(grid)
-    ss.solve(grid)
-    print("__________________________")
-    ss.print_board(grid)
+    board = sudoku.get_board(recognizer) 
+    ss.final(board.grid)
 
 if __name__ == "__main__":
     main()
