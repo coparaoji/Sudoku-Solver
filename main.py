@@ -13,12 +13,18 @@ def main():
 
     path = "Assets/puzz1.jpg"
 
+    # Read the image.
     sudoku = reader.readImage(path)
     sudoku.show()
+
+    # Get the model.
     model = load_model('digit_recognizer')
     recognizer = dr.DigitRecognizer(model)
 
-    board = sudoku.get_board(recognizer) 
+    # Attempting to recognize digits.
+    board = sudoku.get_board(recognizer)
+
+    # Solving the sudoku puzzle from gotten form the image.
     ss.final(board.grid)
 
 if __name__ == "__main__":
