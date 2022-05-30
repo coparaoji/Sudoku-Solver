@@ -24,7 +24,7 @@ def main():
     # Attempting to recognize digits.
     board = sudoku.get_board(recognizer)
 
-    # Solving the sudoku puzzle from gotten form the image.
+    # Solving the sudoku puzzle from gotten form the image..
     ss.final(board.grid)
 
 if __name__ == "__main__":
