@@ -4,6 +4,8 @@
 # 2022 Alex Oparaoji
 # email coparaoji@gmail.com
 # -----------------------------------------------------------
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import digit_recognizer as dr
 import solver as ss
 import sudoku_reader as reader
