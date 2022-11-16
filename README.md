@@ -32,6 +32,23 @@ Sudoku can be solved by one by one assigning numbers to empty cells. Before assi
 <img src="Assets/results.PNG" width=width="600" height="400"></img> 
 </p>
 
+Go to the project directory
+
+```bash
+  cd SudokuSolver
+```
+
+Install dependencies
+
+```bash
+  pip -r requirements.txt
+```
+
+Start the server
+
+```bash
+  python3 main.py
+```
 #### Final words
 Some future improvements I can see now:
 1. It would have been more reliable to use a ConvNN to locate the board. That would however require a labeled dataset of sudoku images which I presently don't have.
