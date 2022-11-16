@@ -19,6 +19,7 @@ class Image:
         self.title = title
 
     def show(self):
+        # This method shows the image on screen
         if(self.cv_image is not None):
             title = self.title
             screen_res = 1280, 720  #define the screen resalution
@@ -43,7 +44,7 @@ class Image:
             cv.destroyAllWindows()
 
 class InputImage(Image):
-    #This is for handling the source image
+    # This is for handling the source image
 
     board = None
     path = None
@@ -92,9 +93,6 @@ class InputImage(Image):
         
         return Board('board',newImage,grid_corners, model)
 
-
-
-
 class Board(Image):
     #This holds, the board corners, list of boxes objects, and 2d list of sudoku board box numbers.
 
@@ -126,7 +124,6 @@ class Board(Image):
             if ((ind+1)%9==0):
                 self.grid.append(m)
                 m = []
-
 
 class Box(Image):
     #This class is for storing grid-box images.

@@ -16,6 +16,7 @@ from tensorflow.keras.models import load_model
 
 
 def showImage(img,title='Resized Window'):
+    # This method shows the image on screen
 
     #define the screen resulation
     screen_res = 1280, 720
@@ -162,7 +163,6 @@ def build_and_train_model():
 
 class DigitRecognizer:
     model = None
-
 
     def __init__(self, model) -> None:
         self.model = model
