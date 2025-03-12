@@ -16,11 +16,12 @@ def main():
     path = "Assets/puzz1.jpg"
 
     # Read the image.
-    sudoku = reader.readImage(path)
+    sudoku = reader.readImage(path) #loads the image, assigns a name, and Image.show,InputImage.getBaord functions
     sudoku.show()
 
     # Get the model.
-    model = load_model('digit_recognizer')
+    model = None #broken need to retrain model and output newer model format - load_model('digit_recognizer')
+
     recognizer = dr.DigitRecognizer(model)
 
     # Attempting to recognize digits.

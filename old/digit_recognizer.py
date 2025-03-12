@@ -12,7 +12,6 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
 from tensorflow import keras
 from tensorflow.keras.utils import to_categorical
-from tensorflow.keras.models import load_model
 
 
 def showImage(img,title='Resized Window'):
