@@ -1,19 +1,45 @@
-# Sudoku Solver
+# Sudoku-Solver
+A project to solve sudoku puzzles (and to help me practice SOLID design principles, feedback would be greatly appreciated).
 
-This project solves Sudoku puzzles by implementing an algorithm that can take a variety of input formats and solving strategies.
+#### Recognizing the Board
+Using this bit from the OpenCV docs, **Contours can be explained simply as shapes joining all the continuous points (along the boundary), having same color or intensity. The contours are a useful tool for shape analysis and object detection and recognition.*/
 
-Jey features:
-- Supports multiple levels of difficulty.
- - Input validation and auto-generation of sudoku boards.
-- Interface with a user-triendly console for setting up game states.
+<p align="center"><img src="Assets/contours.png" width="600" height="400" class="center"></img></p>
+We can assume the board is the largest contour in the image and find the corners to extract the grid.
+Before we find the corners some image preprocessing steps need to be done to ensure accuracy; greysclaing, blurring, thresholding, and dilation.
+Once the vertices of the contour have been retrieved, we will do a K-means cluster for 4 clusters and use their means as the 4 corners of the graph.
 
-## Usage
+<p align="center"><img src="Assets/preprocess.png" width="600" height="400"></p>
 
-To use, simply load the project and run:
+#### Recognizing the numbers
+Once the grid has been located we can roughly get the grid-boxes by evenly splitting the grid into 81 9x9 boxes.
+A convolutional neural network will be used to recognize the numbers. It has 4 convolutional layers, 2 pooling layers, and 2 fully-connected layers.
+The full architecture and training process can be found in digit_recognizer.py.
+It was trained using the MINST digit dataset and a dataset of computer generated digits.
 
-```sh
-# Run the project
-run sudoku_solver
-```
+<p align="center"><img src="Assets/recognize.png" width="600" height="400"></p>
 
-The program will ask you for input with a valid Sudoku board configuration, and will output the solution.
+#### Solving Sudoku
+Sudoku can be solved by one by one assigning numbers to empty cells. Before assigning a number, check whether it is safe to assign.
+Check that the same number is not present in the current row, current column and current 3X3 subgrid.
+After checking for safety, assign the number, and recursively check whether this assignment leads to a solution or not.
+If the assignment doesn't lead to a solution, then try the next number for the current empty cell.
+And if none of the numbers (1 to 9) leads to a solution, return false and print no solution exists.
+
+#### Results 
+<p align="center"><img src="Assets/results.PNG" width="600" height="400"></p>
+
+Go to the project directory
+
+<pre><code>cd SudokuSolver</code></pre>
+Install dependencies:
+
+<pre><code>pip -r requirements.txt</code></pre>
+Start the server:
+<pre><code>python3 main.py</code></pre>
+
+#### Final words
+Some future improvements I can see now:
+1. It would have been more reliable to use a ConvNN to locate the board. That would however require a labeled dataset of sudoku images which I don't have.
+2. Back tracking works to solve sudoku all the time but a more efficient method exist using linear optimization. It doesn't work all the time but it could be used first then backtracking sould be a fallback option.
+3. Will be revisiting this project to improve the documentation, system design, testing, and error handling.
